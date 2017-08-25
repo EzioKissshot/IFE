@@ -1,0 +1,19 @@
+#root{
+  display: flex;
+}
+
+
+
+#pickers{
+  display: flex;
+  flex-direction: column;
+}
+
+#panel, #tie, #rgb, #hsl{
+  padding:5px;
+  margin:5px;
+}
+
+.input-group{
+  margin:5px;
+}
