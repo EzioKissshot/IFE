@@ -3,9 +3,7 @@ html,body{
 }
 
 body{
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
 }
 
 *{
@@ -16,9 +14,12 @@ body{
   background-color: #ccc;
   height: 200px;
   width: 400px;
-  display: flex;
-  position: relative;
-  justify-content: space-between;
+
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+
 }
 
 .top-left, .bottom-right{
@@ -28,13 +29,17 @@ body{
 }
 
 .top-left{
-  align-self: flex-start;
   border-bottom-right-radius: 50px;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .bottom-right{
-  align-self: flex-end;
   border-top-left-radius: 50px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .border-width-hint{
@@ -69,12 +74,14 @@ body{
 
 .main-height-hint{
   position: absolute;
-  height: 100%;
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
   left:-50px;
+  top:50%;
+  transform: translateY(-50%);
+}
+
+.main-height-hint span{
+  display: block;
+  text-align: center;
 }
 
 
