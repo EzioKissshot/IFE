@@ -37,11 +37,11 @@ _Color.prototype = {
     return this;
   },
   setS:function(value){
-    this._s = value.toFixed(4)*100;
+    this._s = parseFloat(value.toFixed(4))*100;
     return this;
   },
   setL:function(value){
-    this._l = value.toFixed(4)*100;
+    this._l = parseFloat(value.toFixed(4))*100;
     return this;
   },
   getH:function(){
@@ -60,11 +60,12 @@ _Color.prototype = {
 
 const lightPanel = {
   // how to make width and height equal to range
-  range:100,
+  range:72,
   width:360,
   height:360,
   getLight:function({x,y}){
-    return 1 - (x/this.width + y/this.height)/2;
+    let r =  1 - (x/this.width + y/this.height)/2;
+    return parseFloat(r.toFixed(4));
   }
 }
 
@@ -73,8 +74,12 @@ function updateColorLight(color, pos){
   return color.setL(lightPanel.getLight({x,y}));
 }
 
+function cloneColor(color){
+  return $.extend(true, {}, color);
+}
+
 function drawLightPanel(color, ctx){
-  const _color = $.extend(true,{},color);
+  const _color = cloneColor(color);
   clearLightPanel(ctx);
   const {range, width, height} = lightPanel;
   for(let x = 0; x < width;x+=width/range){
@@ -96,11 +101,13 @@ const hueTie = {
 }
 
 function drawHueTie(color, ctx){
+  const _color = cloneColor(color);
+  _color.setL(0.5);
   clearHueTie(ctx);
   const {width, height} = hueTie;
   for(let i = 0;i<height;i++){
-    color.setH(i);
-    ctx.fillStyle = color.hex();
+    _color.setH(i);
+    ctx.fillStyle = _color.hex();
     ctx.fillRect(0,i,width,1);
   }
 }
@@ -134,13 +141,12 @@ function getHuePos(event){
 
 function updateColorInfos(color){
   const [r,g,b] = color.rgb();
-  const [h,s,l] = color.hsl();
   $('#r > input')[0].value = r;
   $('#g > input')[0].value = g;
   $('#b > input')[0].value = b;
-  $('#h > input')[0].value = h;
-  $('#s > input')[0].value = s;
-  $('#l > input')[0].value = l;
+  $('#h > input')[0].value = color.getH();
+  $('#s > input')[0].value = color.getS();
+  $('#l > input')[0].value = color.getL();
   
 }
 
@@ -161,6 +167,7 @@ $(function(){
     // only support Chrome! offsetX/Y is diff in Chrome and FF/IE.
     const {x, y} = getLightPos(e)
     updateColorLight(color, {x,y});
+    console.log(color);
     updateColorInfos(color);
     drawLightPanel(color, panelCtx);
     //drawHueTie(color, tieCtx);
@@ -169,10 +176,13 @@ $(function(){
 
   $tie.on('click', e=>{
     updateColorHue(color, getHuePos(e));
+    console.log(color);
     updateColorInfos(color);
     drawLightPanel(color, panelCtx);
     drawHueTie(color, tieCtx);
+    // TODO:
     // drawCircle(tieCtx, 0, y, 1);
+    console.log(color);
   })
 })
 
