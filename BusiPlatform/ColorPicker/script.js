@@ -139,6 +139,7 @@ function getHuePos(event){
   return event.offsetY - parseInt(window.getComputedStyle(event.target).paddingTop);
 }
 
+// TODO: when these number input changed, change color too
 function updateColorInfos(color){
   const [r,g,b] = color.rgb();
   $('#r > input')[0].value = r;
@@ -151,17 +152,16 @@ function updateColorInfos(color){
 }
 
 $(function(){
+  const color = new _Color(177,1,0.5);
+
   const $panel = $('#panel');
   const panelCtx = $panel[0].getContext('2d');
-  const lightInitColor = new _Color(177,1,1);
-  drawLightPanel(lightInitColor, panelCtx);
+  drawLightPanel(color, panelCtx);
 
   const $tie = $('#tie');
   const tieCtx = $tie[0].getContext('2d');
-  const hueTieInitColor = new _Color(177,1,0.5);
-  drawHueTie(hueTieInitColor, tieCtx);
+  drawHueTie(color, tieCtx);
 
-  const color = new _Color(177,1,0.5);
   
   $panel.on('click',e=>{
     // only support Chrome! offsetX/Y is diff in Chrome and FF/IE.
@@ -184,5 +184,10 @@ $(function(){
     // drawCircle(tieCtx, 0, y, 1);
     console.log(color);
   })
+
+  // $("#picker").on('change input','input',e=>{
+    
+  // })
+
 })
 
