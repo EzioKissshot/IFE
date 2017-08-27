@@ -80,17 +80,24 @@ function getHuePos(event){
   return event.offsetY - parseInt(window.getComputedStyle(event.target).paddingTop);
 }
 
-// TODO: when these number input changed, change color too
 function renderColorInfos(color){
   const [r,g,b] = color.rgb();
   const [h,s,l] = color.hsl();
-  $('#r > input')[0].value = r;
-  $('#g > input')[0].value = g;
-  $('#b > input')[0].value = b;
-  $('#h > input')[0].value = h;
-  $('#s > input')[0].value = s;
-  $('#l > input')[0].value = l;
+  setColorFragment("r",r)
+  setColorFragment("g",g)
+  setColorFragment("b",b)
+  setColorFragment("h",h)
+  setColorFragment("s",s)
+  setColorFragment("l",l)
   
+}
+
+function getColorFragment(name){
+  return $("#"+name+" > input")[0].value;
+}
+
+function setColorFragment(name, value){
+  $("#"+name+" > input")[0].value = value;
 }
 
 $(function(){
@@ -104,6 +111,8 @@ $(function(){
   const tieCtx = $tie[0].getContext('2d');
   renderHueTie(color, tieCtx);
 
+  renderColorInfos(color);
+
   
   $panel.on('click',e=>{
     // only support Chrome! offsetX/Y is diff in Chrome and FF/IE.
@@ -112,7 +121,6 @@ $(function(){
     console.log(color);
     renderColorInfos(color);
     renderLightPanel(color, panelCtx);
-    //drawHueTie(color, tieCtx);
     renderCircle(panelCtx, x, y, 2);
   })
 
@@ -127,9 +135,17 @@ $(function(){
     console.log(color);
   })
 
-  // $("#picker").on('change input','input',e=>{
-    
-  // })
+  $("#pickers").on('change input','.color-group',e=>{
+    if(e.currentTarget.id==="rgb"){
+      color = chroma(getColorFragment("r"), getColorFragment("g"), getColorFragment("b"));
+    }
+    if(e.currentTarget.id==="hsl"){
+      color = chroma.hsl(getColorFragment("h"), getColorFragment("s"), getColorFragment("l"));
+    }
+    renderColorInfos(color);
+    renderLightPanel(color, panelCtx);
+    renderHueTie(color, tieCtx);
+  })
 
 })
 
