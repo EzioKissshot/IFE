@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+    <script src="../../../node_modules/jquery/dist/jquery.js"></script>
+    <link rel="stylesheet" href="../../../node_modules/normalize.css/normalize.css">
+
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js"></script>
+  </head>
+  <body>
+
+    <div class="container">
+      <!-- 这里用width:100%或者在css中用100%也不行，貌似会识别成100px并且占满100% -->
+      <canvas class="image-panel">
+
+      </canvas>
+      <div class="controler">
+        <div>
+
+          <input id="img-src" type="file" accept="image/*" value="select image"/>
+        </div>
+        <div>
+
+          <input type="url" id="img-url"><button id="load-img-from-url">载入</button>
+        </div>
+      </div>
+      <div class="thumbnail-container">
+          <canvas class="thumbnail"></canvas>
+          <canvas class="thumbnail-rect"></canvas>
+      </div>
+      
+    </div>
+
+    
+    
+    
+  </body>
+</html>
+
