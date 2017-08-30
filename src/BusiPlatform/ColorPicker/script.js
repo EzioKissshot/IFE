@@ -1,3 +1,13 @@
+//  TODO:每次换颜色都要Canvas重新画一遍，耗费时间太长
+
+//  现在想到几个改进的思路：
+ 
+//  1. 将用户选择的光标和panel分离，光标用另一个控件设置z-index覆盖在panel上方，这样panel只要载入页面或者color的hue改变的时候渲染
+ 
+//  2.用一张图片代替canvas，如果color的hue改变，用某种函数修改图片的hue，但是此方法效率不一定有canvas好
+ 
+//  3.自己写一个hsl和rgb互转函数，取代第三方库
+
 const lightPanel = {
   // how to make width and height equal to range
   range:72,
