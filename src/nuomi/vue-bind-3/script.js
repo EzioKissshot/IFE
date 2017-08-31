@@ -1,5 +1,6 @@
 function Observer(src, isTop = true){
   this.top = isTop;
+  
   if(isTop){
     this.data = {};
     buildObj(this.data, src);
@@ -10,6 +11,7 @@ function Observer(src, isTop = true){
 
 Observer.prototype = {
   constructor: Observer,
+
   $watch:function(prop, callback){
     return function(){
       if(!this.watcher[prop]){
@@ -40,24 +42,27 @@ function defineProp(obj){
   return function(key){
     log(key);
     Object.defineProperty(obj, key, {
+
       get: function(){
         if(!(this.raw[key] instanceof Observer)){
           getDecorator(key);
         }
         return this.raw[key];
       },
+
       set: function(value){
         if(value && typeof value === "object"){
           this.raw[key] = new Observer(value, false);
         }else{
           setDecorator(key, value)
           this.raw[key] = value;
-          const callbacks = this.watcher[key];
-          if(callbacks){
-            callbacks.forEach(f=>f(value));
-          }
+        }
+        const callbacks = this.watcher[key];
+        if(callbacks){
+          callbacks.forEach(f=>f(value));
         }
       },
+
       configurable:true,
       enumerable:true
     })
