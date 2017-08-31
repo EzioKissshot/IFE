@@ -1,0 +1,110 @@
+.nav-bar{
+  background-color: wheat;
+  overflow: hidden;
+  position: relative;
+}
+
+.logo{
+  float: left;
+}
+
+
+nav{
+  position: absolute;
+  top:50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+ul{
+  list-style-type: none;
+}
+
+.nav-list li{
+  display: inline;
+  padding:5px;
+  
+}
+
+.nav-list a{
+  text-decoration: none;
+}
+
+body{
+  background-color: #dedede;
+}
+
+.section{
+  background-color: white;
+  margin:10px;
+  padding:10px;
+}
+
+h3{
+  color:rgba(84,110,122 ,1);
+  font-weight: bold;
+}
+
+.artcle-info{
+  color:rgba(84,110,122 ,1);
+}
+
+#pics .pic-container {
+  border: 1px solid rgba(144,164,174 ,1);
+  display: inline-block;
+  padding: 10px;
+  margin: 20px;
+}
+
+.pic-container span{
+  display: block;
+  text-align: center;
+}
+
+.pic-container img{
+  height: 90px;
+  width: 150px;
+}
+
+.table thead{
+  background-color: black;
+  color:white;
+}
+
+.table tfoot{
+  background-color: #cccccc;
+}
+
+.table{
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table, .table th, .table td{
+  border: 1px solid #cccccc;
+}
+
+#submission h2{
+  padding:10px;
+  border-left: 5px #cccccc solid;
+}
+
+#submission label{
+  display: inline-block;
+  width:200px;
+  text-align: right;
+  vertical-align: top;
+}
+
+#submission button{
+  width:100%;
+  margin:10px;
+  background-color: blue;
+  color: white;
+}
+
+
+form > div{
+  padding:5px;
+}
+
