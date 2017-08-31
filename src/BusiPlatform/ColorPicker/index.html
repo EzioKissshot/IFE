@@ -1,53 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>title</title>
-    <script src="../../../node_modules/jquery/dist/jquery.js"></script>
-    <script src="../../../node_modules/chroma-js/chroma.js"></script>
-    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="./style.css">
-    <script src="./script.js"></script>
-  </head>
-  <body>
-    <div id="root">
-      <canvas id="panel" width="360px" height="360px"></canvas>
-      <canvas id="tie" width="20px" height="360px"></canvas>
 
-      <div id="pickers">
+<head>
+  <meta charset="utf-8">
+  <title>title</title>
+  <script src="../../../node_modules/jquery/dist/jquery.js"></script>
+  <script src="../../../node_modules/chroma-js/chroma.js"></script>
+  <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js"></script>
+</head>
 
-        <div id="rgb" class="color-group">
-          <div id="r" class="input-group">
-            <span class="input-group-addon">R</span>
-            <input class="form-control" type="number" max="255" min="0" step="1">
-          </div>
-          <div id="g" class="input-group">
-            <span class="input-group-addon">G</span>
-            <input class="form-control" type="number" max="255" min="0" step="1">
-          </div>
-          <div id="b" class="input-group">
-            <span class="input-group-addon">B</span>
-            <input class="form-control" type="number" max="255" min="0" step="1">
-          </div>
+<body>
+  <div id="root">
+    <canvas id="panel" width="360px" height="360px"></canvas>
+    <canvas id="tie" width="20px" height="360px"></canvas>
+
+    <div id="pickers">
+
+      <div id="rgb" class="color-group">
+        <div id="r" class="input-group">
+          <span class="input-group-addon">R</span>
+          <input class="form-control" type="number" max="255" min="0" step="1">
         </div>
-    
-        <div id="hsl" class="color-group">
-          <div id="h" class="input-group">
-            <span class="input-group-addon">H</span>
-            <input class="form-control" type="number" max="359" min="0" step="1">
-          </div>
-          <div id="s" class="input-group">
-            <span class="input-group-addon">S</span>
-            <input class="form-control" type="number" max="1" min="0" step="0.01">
-          </div>
-          <div id="l" class="input-group">
-            <span class="input-group-addon">L</span>
-            <input class="form-control" type="number" max="1" min="0" step="0.01">
-          </div>
+        <div id="g" class="input-group">
+          <span class="input-group-addon">G</span>
+          <input class="form-control" type="number" max="255" min="0" step="1">
+        </div>
+        <div id="b" class="input-group">
+          <span class="input-group-addon">B</span>
+          <input class="form-control" type="number" max="255" min="0" step="1">
+        </div>
+      </div>
+
+      <div id="hsl" class="color-group">
+        <div id="h" class="input-group">
+          <span class="input-group-addon">H</span>
+          <input class="form-control" type="number" max="359" min="0" step="1">
+        </div>
+        <div id="s" class="input-group">
+          <span class="input-group-addon">S</span>
+          <input class="form-control" type="number" max="1" min="0" step="0.01">
+        </div>
+        <div id="l" class="input-group">
+          <span class="input-group-addon">L</span>
+          <input class="form-control" type="number" max="1" min="0" step="0.01">
         </div>
       </div>
     </div>
-    
-  </body>
-</html>
+  </div>
 
+</body>
+
+</html>
