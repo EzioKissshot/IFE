@@ -110,13 +110,9 @@ function defineProp(obj) {
   return function(key) {
     Object.defineProperty(obj, key, {
       get: function() {
-        if (!(this.raw[key] instanceof Observer)) {
-          getterDecorator(key);
-        }
         return this.raw[key];
       },
 
-      // FIXME: 第二单元测试还是跑不通
       set: function(value) {
         if (value && typeof value === "object") {
           this.raw[key] = new Observer(
@@ -126,7 +122,6 @@ function defineProp(obj) {
             key
           );
         } else {
-          setterDecorator(key, value);
           this.raw[key] = value;
         }
 
@@ -146,15 +141,6 @@ function defineProp(obj) {
   };
 }
 
-function getterDecorator(...args) {
-  const [key] = args;
-  // log(`你访问了${key}`);
-}
-
-function setterDecorator(...args) {
-  const [key, value] = args;
-  // log(`你设置了${key}, 新的值为${value}`)
-}
 
 function log(o) {
   console.log.call(console, o);
