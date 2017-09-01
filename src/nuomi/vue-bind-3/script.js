@@ -18,7 +18,7 @@ Observer.prototype = {
   getThis: function() {
     return this._this;
   },
-  // use to set listener
+  // way to set listener
   $watch: function(prop, callback) {
     return function() {
       if (!this.data.watcher[prop]) {
