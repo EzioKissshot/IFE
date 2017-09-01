@@ -38,7 +38,6 @@ function defineRaw(obj, src) {
 
 function defineProp(obj) {
   return function(key) {
-    log(key);
     Object.defineProperty(obj, key, {
       get: function() {
         if (!(this.raw[key] instanceof Observer)) {
