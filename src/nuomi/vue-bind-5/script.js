@@ -49,11 +49,15 @@ Observer.prototype = {
     event.path.push({
       [this.data._name ? this.data._name : this._name]: this
     });
-    // log("=======")
-    // log(event.current._name)
-    // log(event.path);
-    // log(this);
-    // log("=======")
+    event.namePath.push(
+      this.data._name ? this.data._name: this._name
+    );
+    log("=======")
+    log(event.current._name)
+    log(event.path);
+    log(event.namePath);
+    log(this);
+    log("=======")
     this._parent && this._parent.bubble(event);
 
     
@@ -123,7 +127,8 @@ function defineProp(obj) {
             target: key,
             value: value,
             current: obj,
-            path: [key]
+            path: [key],
+            namePath: [key],
           })
         );
       },
@@ -139,11 +144,12 @@ function log(o) {
   console.log.call(console, o);
 }
 
-function _Event({target, value, current, path}) {
+function _Event({target, value, current, path, namePath}) {
   this.target = target;
   this.value = value;
   this.current = current;
   this.path = path;
+  this.namePath = namePath;
 }
 
 const Vue = function({el, data}){
@@ -151,7 +157,7 @@ const Vue = function({el, data}){
   this.templates = this.elements.map(e => {return {element: e, innerHTML: e.innerHTML}});
   this.obs = new Observer(data);
   this.obs.$watch('*', e=>{
-    render(this.templates, this.obs.data);
+    render(this.templates, this.obs.data, e);
   })
 
   render(this.templates, this.obs.data);
@@ -173,8 +179,14 @@ window.onload = function() {
   });
 };
 
-/* It's a simple and unsafe implement, use eval can be injection attack, and now we only handle binding in innerHTML */
-const render = function(templates, data){
+/* It's a simple and unsafe implement, use eval can be injection attacked, and now we only handle binding in innerHTML */
+const render = function(templates, data, event){
+  // 如果要实现局部更新的话，应该是要实现一个类似于Virtul DOM的东西
+  // 如果有时间可以实现一下。
+  // if(event){
+
+  // }
+
   templates.forEach(function(e) {
     const resultInnerHTML = e.innerHTML.replace(/{{([^}}]+)}}/g, function(
       match,
