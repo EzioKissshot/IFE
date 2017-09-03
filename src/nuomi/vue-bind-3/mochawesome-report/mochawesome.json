@@ -1,0 +1,333 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 3,
+    "passes": 0,
+    "pending": 0,
+    "failures": 3,
+    "start": "2017-09-03T01:53:07.880Z",
+    "end": "2017-09-03T01:53:07.893Z",
+    "duration": 13,
+    "testsRegistered": 3,
+    "passPercent": 0,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "passPercentClass": "danger",
+    "pendingPercentClass": "danger"
+  },
+  "suites": {
+    "title": "",
+    "suites": [
+      {
+        "title": "事件传播测试",
+        "suites": [],
+        "tests": [
+          {
+            "title": "简单的无嵌套对象",
+            "fullTitle": "事件传播测试 简单的无嵌套对象",
+            "timedOut": false,
+            "duration": 0,
+            "state": "failed",
+            "pass": false,
+            "fail": true,
+            "pending": false,
+            "code": "let app1 = new Observer({\n  name: 'youngwind',\n  age: 25\n});\nlet s = sinon.spy();\napp1.$watch('age', s);\napp1.data.age = 100;\ns.should.be.calledWith(100);",
+            "err": {
+              "message": "ReferenceError: Observer is not defined",
+              "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:5:20)"
+            },
+            "isRoot": false,
+            "uuid": "fb3b138e-bad1-4223-9b55-7c08279f175e",
+            "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+            "isHook": false,
+            "skipped": false
+          },
+          {
+            "title": "嵌套对象",
+            "fullTitle": "事件传播测试 嵌套对象",
+            "timedOut": false,
+            "duration": 0,
+            "state": "failed",
+            "pass": false,
+            "fail": true,
+            "pending": false,
+            "code": "let app2 = new Observer({\n  name:{\n    firstName:\"Ezio\",\n    lastName:\"Shiki\"\n  },\n  age:12\n})\nlet spy1 = sinon.spy();\napp2.$watch('name', spy1);\nlet spy2 = sinon.spy();\napp2.data.name.$watch('firstName', spy2);\nlet spy3 = sinon.spy();\napp2.data.name.$watch('lastName', spy3);\nlet spy4 = sinon.spy();\napp2.$watch('age',spy4);\napp2.data.name.firstName = \"Xi\";\nspy2.should.be.calledWith(\"Xi\");\nspy1.should.be.calledWith(\"Xi\");\nspy3.should.not.be.called();\nspy4.should.not.be.called();\n\n//FIXME: 这里会出错，因为直接新创建了一个属性app2.data.name，而不是原来就有name\n//这样不会经过setter，也就不能构造成Observer了……\n// let app2 = new Observer({\n//   age:12\n// })\n// app2.data.name = {\n//   firstName:\"Ezio\",\n//   lastName:\"Shiki\"\n// }\n// app2.$watch('name', e=> {\n//   console.log(\"====\")\n//   console.log(e);\n//   console.log(\"name\")\n//   console.log(\"========\")\n// });\n// app2.data.name.$watch('firstName', e=>{\n//   console.log(\"====\")\n//   console.log(e);\n//   console.log(\"firstname\")\n//   console.log(\"========\")\n// });",
+            "err": {
+              "message": "ReferenceError: Observer is not defined",
+              "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:16:20)"
+            },
+            "isRoot": false,
+            "uuid": "43a26e5a-c73b-4bd7-9ded-6034c5edb199",
+            "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+            "isHook": false,
+            "skipped": false
+          },
+          {
+            "title": "后添加嵌套对象",
+            "fullTitle": "事件传播测试 后添加嵌套对象",
+            "timedOut": false,
+            "duration": 0,
+            "state": "failed",
+            "pass": false,
+            "fail": true,
+            "pending": false,
+            "code": "let app3 = new Observer({\n  name:\"Fuck\",\n  age:12\n})\napp3.data.name = {\n  firstName:\"Ezio\",\n  lastName:\"Shiki\"\n}\nlet spy1 = sinon.spy();\napp3.$watch('name', spy1);\nlet spy2 = sinon.spy();\napp3.data.name.$watch('firstName', spy2);\nlet spy3 = sinon.spy();\napp3.data.name.$watch('lastName', spy3);\nlet spy4 = sinon.spy();\napp3.$watch('age',spy4);\napp3.data.name.firstName = \"Xi\";\nspy2.should.be.calledWith(\"Xi\");\nspy1.should.be.calledWith(\"Xi\");\nspy3.should.not.be.called();\nspy4.should.not.be.called();",
+            "err": {
+              "message": "ReferenceError: Observer is not defined",
+              "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:68:20)"
+            },
+            "isRoot": false,
+            "uuid": "1f285c4e-2b02-4f7b-998b-143ed3a8a713",
+            "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+            "isHook": false,
+            "skipped": false
+          }
+        ],
+        "pending": [],
+        "root": false,
+        "_timeout": 2000,
+        "file": "\\tests.js",
+        "uuid": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+        "beforeHooks": [],
+        "afterHooks": [],
+        "fullFile": "C:\\Dropbox\\MyCode\\FE\\IFE\\src\\nuomi\\vue-bind-3\\tests.js",
+        "passes": [],
+        "failures": [
+          {
+            "title": "简单的无嵌套对象",
+            "fullTitle": "事件传播测试 简单的无嵌套对象",
+            "timedOut": false,
+            "duration": 0,
+            "state": "failed",
+            "pass": false,
+            "fail": true,
+            "pending": false,
+            "code": "let app1 = new Observer({\n  name: 'youngwind',\n  age: 25\n});\nlet s = sinon.spy();\napp1.$watch('age', s);\napp1.data.age = 100;\ns.should.be.calledWith(100);",
+            "err": {
+              "message": "ReferenceError: Observer is not defined",
+              "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:5:20)"
+            },
+            "isRoot": false,
+            "uuid": "fb3b138e-bad1-4223-9b55-7c08279f175e",
+            "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+            "isHook": false,
+            "skipped": false
+          },
+          {
+            "title": "嵌套对象",
+            "fullTitle": "事件传播测试 嵌套对象",
+            "timedOut": false,
+            "duration": 0,
+            "state": "failed",
+            "pass": false,
+            "fail": true,
+            "pending": false,
+            "code": "let app2 = new Observer({\n  name:{\n    firstName:\"Ezio\",\n    lastName:\"Shiki\"\n  },\n  age:12\n})\nlet spy1 = sinon.spy();\napp2.$watch('name', spy1);\nlet spy2 = sinon.spy();\napp2.data.name.$watch('firstName', spy2);\nlet spy3 = sinon.spy();\napp2.data.name.$watch('lastName', spy3);\nlet spy4 = sinon.spy();\napp2.$watch('age',spy4);\napp2.data.name.firstName = \"Xi\";\nspy2.should.be.calledWith(\"Xi\");\nspy1.should.be.calledWith(\"Xi\");\nspy3.should.not.be.called();\nspy4.should.not.be.called();\n\n//FIXME: 这里会出错，因为直接新创建了一个属性app2.data.name，而不是原来就有name\n//这样不会经过setter，也就不能构造成Observer了……\n// let app2 = new Observer({\n//   age:12\n// })\n// app2.data.name = {\n//   firstName:\"Ezio\",\n//   lastName:\"Shiki\"\n// }\n// app2.$watch('name', e=> {\n//   console.log(\"====\")\n//   console.log(e);\n//   console.log(\"name\")\n//   console.log(\"========\")\n// });\n// app2.data.name.$watch('firstName', e=>{\n//   console.log(\"====\")\n//   console.log(e);\n//   console.log(\"firstname\")\n//   console.log(\"========\")\n// });",
+            "err": {
+              "message": "ReferenceError: Observer is not defined",
+              "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:16:20)"
+            },
+            "isRoot": false,
+            "uuid": "43a26e5a-c73b-4bd7-9ded-6034c5edb199",
+            "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+            "isHook": false,
+            "skipped": false
+          },
+          {
+            "title": "后添加嵌套对象",
+            "fullTitle": "事件传播测试 后添加嵌套对象",
+            "timedOut": false,
+            "duration": 0,
+            "state": "failed",
+            "pass": false,
+            "fail": true,
+            "pending": false,
+            "code": "let app3 = new Observer({\n  name:\"Fuck\",\n  age:12\n})\napp3.data.name = {\n  firstName:\"Ezio\",\n  lastName:\"Shiki\"\n}\nlet spy1 = sinon.spy();\napp3.$watch('name', spy1);\nlet spy2 = sinon.spy();\napp3.data.name.$watch('firstName', spy2);\nlet spy3 = sinon.spy();\napp3.data.name.$watch('lastName', spy3);\nlet spy4 = sinon.spy();\napp3.$watch('age',spy4);\napp3.data.name.firstName = \"Xi\";\nspy2.should.be.calledWith(\"Xi\");\nspy1.should.be.calledWith(\"Xi\");\nspy3.should.not.be.called();\nspy4.should.not.be.called();",
+            "err": {
+              "message": "ReferenceError: Observer is not defined",
+              "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:68:20)"
+            },
+            "isRoot": false,
+            "uuid": "1f285c4e-2b02-4f7b-998b-143ed3a8a713",
+            "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+            "isHook": false,
+            "skipped": false
+          }
+        ],
+        "skipped": [],
+        "hasBeforeHooks": false,
+        "hasAfterHooks": false,
+        "hasTests": true,
+        "hasSuites": false,
+        "totalTests": 3,
+        "totalPasses": 0,
+        "totalFailures": 3,
+        "totalPending": 0,
+        "totalSkipped": 0,
+        "hasPasses": false,
+        "hasFailures": true,
+        "hasPending": false,
+        "hasSkipped": false,
+        "duration": 0,
+        "rootEmpty": false
+      }
+    ],
+    "tests": [],
+    "pending": [],
+    "root": true,
+    "_timeout": 2000,
+    "uuid": "51327242-b70b-4ae4-9858-02d08942c6c8",
+    "beforeHooks": [],
+    "afterHooks": [],
+    "fullFile": "",
+    "file": "",
+    "passes": [],
+    "failures": [],
+    "skipped": [],
+    "hasBeforeHooks": false,
+    "hasAfterHooks": false,
+    "hasTests": false,
+    "hasSuites": true,
+    "totalTests": 0,
+    "totalPasses": 0,
+    "totalFailures": 0,
+    "totalPending": 0,
+    "totalSkipped": 0,
+    "hasPasses": false,
+    "hasFailures": false,
+    "hasPending": false,
+    "hasSkipped": false,
+    "duration": 0,
+    "rootEmpty": true
+  },
+  "allTests": [
+    {
+      "title": "简单的无嵌套对象",
+      "fullTitle": "事件传播测试 简单的无嵌套对象",
+      "timedOut": false,
+      "duration": 0,
+      "state": "failed",
+      "pass": false,
+      "fail": true,
+      "pending": false,
+      "code": "let app1 = new Observer({\n  name: 'youngwind',\n  age: 25\n});\nlet s = sinon.spy();\napp1.$watch('age', s);\napp1.data.age = 100;\ns.should.be.calledWith(100);",
+      "err": {
+        "message": "ReferenceError: Observer is not defined",
+        "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:5:20)"
+      },
+      "isRoot": false,
+      "uuid": "fb3b138e-bad1-4223-9b55-7c08279f175e",
+      "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+      "isHook": false,
+      "skipped": false
+    },
+    {
+      "title": "嵌套对象",
+      "fullTitle": "事件传播测试 嵌套对象",
+      "timedOut": false,
+      "duration": 0,
+      "state": "failed",
+      "pass": false,
+      "fail": true,
+      "pending": false,
+      "code": "let app2 = new Observer({\n  name:{\n    firstName:\"Ezio\",\n    lastName:\"Shiki\"\n  },\n  age:12\n})\nlet spy1 = sinon.spy();\napp2.$watch('name', spy1);\nlet spy2 = sinon.spy();\napp2.data.name.$watch('firstName', spy2);\nlet spy3 = sinon.spy();\napp2.data.name.$watch('lastName', spy3);\nlet spy4 = sinon.spy();\napp2.$watch('age',spy4);\napp2.data.name.firstName = \"Xi\";\nspy2.should.be.calledWith(\"Xi\");\nspy1.should.be.calledWith(\"Xi\");\nspy3.should.not.be.called();\nspy4.should.not.be.called();\n\n//FIXME: 这里会出错，因为直接新创建了一个属性app2.data.name，而不是原来就有name\n//这样不会经过setter，也就不能构造成Observer了……\n// let app2 = new Observer({\n//   age:12\n// })\n// app2.data.name = {\n//   firstName:\"Ezio\",\n//   lastName:\"Shiki\"\n// }\n// app2.$watch('name', e=> {\n//   console.log(\"====\")\n//   console.log(e);\n//   console.log(\"name\")\n//   console.log(\"========\")\n// });\n// app2.data.name.$watch('firstName', e=>{\n//   console.log(\"====\")\n//   console.log(e);\n//   console.log(\"firstname\")\n//   console.log(\"========\")\n// });",
+      "err": {
+        "message": "ReferenceError: Observer is not defined",
+        "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:16:20)"
+      },
+      "isRoot": false,
+      "uuid": "43a26e5a-c73b-4bd7-9ded-6034c5edb199",
+      "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+      "isHook": false,
+      "skipped": false
+    },
+    {
+      "title": "后添加嵌套对象",
+      "fullTitle": "事件传播测试 后添加嵌套对象",
+      "timedOut": false,
+      "duration": 0,
+      "state": "failed",
+      "pass": false,
+      "fail": true,
+      "pending": false,
+      "code": "let app3 = new Observer({\n  name:\"Fuck\",\n  age:12\n})\napp3.data.name = {\n  firstName:\"Ezio\",\n  lastName:\"Shiki\"\n}\nlet spy1 = sinon.spy();\napp3.$watch('name', spy1);\nlet spy2 = sinon.spy();\napp3.data.name.$watch('firstName', spy2);\nlet spy3 = sinon.spy();\napp3.data.name.$watch('lastName', spy3);\nlet spy4 = sinon.spy();\napp3.$watch('age',spy4);\napp3.data.name.firstName = \"Xi\";\nspy2.should.be.calledWith(\"Xi\");\nspy1.should.be.calledWith(\"Xi\");\nspy3.should.not.be.called();\nspy4.should.not.be.called();",
+      "err": {
+        "message": "ReferenceError: Observer is not defined",
+        "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:68:20)"
+      },
+      "isRoot": false,
+      "uuid": "1f285c4e-2b02-4f7b-998b-143ed3a8a713",
+      "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+      "isHook": false,
+      "skipped": false
+    }
+  ],
+  "allPending": [],
+  "allPasses": [],
+  "allFailures": [
+    {
+      "title": "简单的无嵌套对象",
+      "fullTitle": "事件传播测试 简单的无嵌套对象",
+      "timedOut": false,
+      "duration": 0,
+      "state": "failed",
+      "pass": false,
+      "fail": true,
+      "pending": false,
+      "code": "let app1 = new Observer({\n  name: 'youngwind',\n  age: 25\n});\nlet s = sinon.spy();\napp1.$watch('age', s);\napp1.data.age = 100;\ns.should.be.calledWith(100);",
+      "err": {
+        "message": "ReferenceError: Observer is not defined",
+        "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:5:20)"
+      },
+      "isRoot": false,
+      "uuid": "fb3b138e-bad1-4223-9b55-7c08279f175e",
+      "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+      "isHook": false,
+      "skipped": false
+    },
+    {
+      "title": "嵌套对象",
+      "fullTitle": "事件传播测试 嵌套对象",
+      "timedOut": false,
+      "duration": 0,
+      "state": "failed",
+      "pass": false,
+      "fail": true,
+      "pending": false,
+      "code": "let app2 = new Observer({\n  name:{\n    firstName:\"Ezio\",\n    lastName:\"Shiki\"\n  },\n  age:12\n})\nlet spy1 = sinon.spy();\napp2.$watch('name', spy1);\nlet spy2 = sinon.spy();\napp2.data.name.$watch('firstName', spy2);\nlet spy3 = sinon.spy();\napp2.data.name.$watch('lastName', spy3);\nlet spy4 = sinon.spy();\napp2.$watch('age',spy4);\napp2.data.name.firstName = \"Xi\";\nspy2.should.be.calledWith(\"Xi\");\nspy1.should.be.calledWith(\"Xi\");\nspy3.should.not.be.called();\nspy4.should.not.be.called();\n\n//FIXME: 这里会出错，因为直接新创建了一个属性app2.data.name，而不是原来就有name\n//这样不会经过setter，也就不能构造成Observer了……\n// let app2 = new Observer({\n//   age:12\n// })\n// app2.data.name = {\n//   firstName:\"Ezio\",\n//   lastName:\"Shiki\"\n// }\n// app2.$watch('name', e=> {\n//   console.log(\"====\")\n//   console.log(e);\n//   console.log(\"name\")\n//   console.log(\"========\")\n// });\n// app2.data.name.$watch('firstName', e=>{\n//   console.log(\"====\")\n//   console.log(e);\n//   console.log(\"firstname\")\n//   console.log(\"========\")\n// });",
+      "err": {
+        "message": "ReferenceError: Observer is not defined",
+        "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:16:20)"
+      },
+      "isRoot": false,
+      "uuid": "43a26e5a-c73b-4bd7-9ded-6034c5edb199",
+      "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+      "isHook": false,
+      "skipped": false
+    },
+    {
+      "title": "后添加嵌套对象",
+      "fullTitle": "事件传播测试 后添加嵌套对象",
+      "timedOut": false,
+      "duration": 0,
+      "state": "failed",
+      "pass": false,
+      "fail": true,
+      "pending": false,
+      "code": "let app3 = new Observer({\n  name:\"Fuck\",\n  age:12\n})\napp3.data.name = {\n  firstName:\"Ezio\",\n  lastName:\"Shiki\"\n}\nlet spy1 = sinon.spy();\napp3.$watch('name', spy1);\nlet spy2 = sinon.spy();\napp3.data.name.$watch('firstName', spy2);\nlet spy3 = sinon.spy();\napp3.data.name.$watch('lastName', spy3);\nlet spy4 = sinon.spy();\napp3.$watch('age',spy4);\napp3.data.name.firstName = \"Xi\";\nspy2.should.be.calledWith(\"Xi\");\nspy1.should.be.calledWith(\"Xi\");\nspy3.should.not.be.called();\nspy4.should.not.be.called();",
+      "err": {
+        "message": "ReferenceError: Observer is not defined",
+        "estack": "ReferenceError: Observer is not defined\n    at Context.<anonymous> (tests.js:68:20)"
+      },
+      "isRoot": false,
+      "uuid": "1f285c4e-2b02-4f7b-998b-143ed3a8a713",
+      "parentUUID": "e14133b8-840f-41f6-be86-0e8ac2ec17ee",
+      "isHook": false,
+      "skipped": false
+    }
+  ],
+  "copyrightYear": 2017
+}
