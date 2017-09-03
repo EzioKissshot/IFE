@@ -52,12 +52,12 @@ Observer.prototype = {
     event.namePath.push(
       this.data._name ? this.data._name: this._name
     );
-    log("=======")
-    log(event.current._name)
-    log(event.path);
-    log(event.namePath);
-    log(this);
-    log("=======")
+    // log("=======")
+    // log(event.current._name)
+    // log(event.path);
+    // log(event.namePath);
+    // log(this);
+    // log("=======")
     this._parent && this._parent.bubble(event);
 
     
@@ -159,25 +159,8 @@ const Vue = function({el, data}){
   this.obs.$watch('*', e=>{
     render(this.templates, this.obs.data, e);
   })
-
   render(this.templates, this.obs.data);
-
 }
-
-window.onload = function() {
-
-  window.app = new Vue({
-    el: "#app",
-    data: {
-      user: {
-        name: "youngwind",
-        age: 25
-      },
-      school: 'bupt',
-      major: {main:'computer',option:'math'}
-    }
-  });
-};
 
 /* It's a simple and unsafe implement, use eval can be injection attacked, and now we only handle binding in innerHTML */
 const render = function(templates, data, event){
@@ -198,3 +181,27 @@ const render = function(templates, data, event){
     e.element.innerHTML = resultInnerHTML;
   });
 }
+
+window.onload = function() {
+
+  window.app = new Vue({
+    el: "#app",
+    data: {
+      user: {
+        name: "youngwind",
+        age: 25
+      },
+      school: 'bupt',
+      major: {main:'computer',option:'math'}
+    }
+  });
+
+  // 只实现了修改部分，没实现绑定部分，所以只能写这么一大串了。
+  document.getElementById('name').addEventListener('input',e=>{
+    window.app.obs.data.user.name = e.target.value
+  })
+  document.getElementById('age').addEventListener('input',e=>{
+    window.app.obs.data.user.age = e.target.value
+  })
+};
+
