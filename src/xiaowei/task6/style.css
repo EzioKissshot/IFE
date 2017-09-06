@@ -182,9 +182,6 @@ section{
   font-size: 12px;
 }
 
-.detail{
-
-}
 
 .left-detail{
   float: left;
@@ -280,6 +277,129 @@ section{
   font-family: "Microsoft YaHei";
   margin: 20px;
 }
+
+.right-detail-list-row{
+  display: flex;
+  margin:10px 0;
+}
+
+.right-detail-list-row p{
+  margin:0;
+  color:#5a5b5b;
+  font-family: SimSun;
+  line-height: 20px;
+}
+
+.right-detail-list-row p:last-of-type{
+  font-style: italic;
+}
+
+.dot{
+  border-bottom: 1px dotted #000;
+  flex-grow: 1;
+}
+
+
+
+
+
+
+
+
+.red-box-container{
+  height: 160px;
+}
+
+.red-box{
+  width:260px;
+  background-color:#d55d5c;
+  height: 100%;
+  float: left;
+}
+
+.quote{
+  background-color: #eee;
+  float: left;
+  width:calc(100% - 260px);
+  height:100%;
+}
+
+.quote > .quote-mark{
+  float: left;
+}
+
+.quote-text{
+  position: relative;
+  line-height: 16px;
+  color: #5a5b5b;
+  font-family: SimHei;
+  font-style: italic;
+  font-size: 14px;
+  margin-left: 15px;
+}
+
+.quote-text > .quote-mark{
+  position: absolute;
+  bottom: 20px;
+  right: -20px;
+  font-style: normal;
+}
+
+.quote-mark{
+  font-size: 72px;
+  color:#d45d5c;
+  font-family: SimHei;
+  margin-left: -25px;
+  margin-bottom: -50px;
+}
+
+.red-box *{
+  color:#ffffff;
+}
+
+.zero{
+  font-size: 110px;
+  font-family: "Microsoft YaHei";
+  height: 100%;
+  vertical-align: middle;
+  display: inline-block;
+  width:70px;
+}
+
+.zero-right{
+  height: 100%;
+  width: calc(100% - 70px);
+  float: right;
+  position: relative;
+}
+
+.zero-right > div{
+  height: 86px;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 2px solid #ffffff;
+  padding-left: 10px;
+}
+
+.zero-right p{
+  font-size: 21px;
+  font-family: SimHei;
+  line-height: 24px;
+  font-style: italic;
+  margin: 0;
+}
+
+.zero-right p:last-child{
+  font-size: 12px;
+  line-height: inherit;
+  margin: inherit;
+  font-style: normal;
+  margin-right: 10px;
+}
+
+
 
 
 
