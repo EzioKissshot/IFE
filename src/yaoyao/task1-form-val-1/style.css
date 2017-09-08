@@ -1,0 +1,44 @@
+#form{
+  margin:50px;
+}
+
+.input-container{
+  display: inline-block;
+}
+
+label, button{
+  vertical-align: top;
+}
+
+.form-component{
+  height: 60px;
+}
+
+.form-component label{
+  padding: 10px;
+}
+
+input.radius{
+  border:none;
+  border: 1px solid #cacaca;
+  border-radius: 5px;
+  height: 20px;
+}
+
+input.right{
+  border: 1px solid rgba(76,175,80 ,1);
+}
+
+input.wrong{
+  border: 1px solid rgba(244,67,54 ,1);
+}
+
+button.primary{
+  background-color: #2f79ba;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 5px 10px;
+}
+
+
