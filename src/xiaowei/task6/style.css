@@ -383,6 +383,7 @@ section {
   vertical-align: middle;
   display: inline-block;
   width: 70px;
+  vertical-align: center;
 }
 
 .zero-right {

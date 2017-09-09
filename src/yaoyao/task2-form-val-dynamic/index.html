@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>title</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js"></script>
+</head>
+
+<body>
+  <form action="get" id="form">
+    <div class="form-component">
+      <label for="name">名称</label>
+      <div class="input-container">
+        <input class="radius" type="text" id="name">
+        <div>
+          <span class="hint" hidden>必填，长度为4~16个字符</span>
+          <span class="validate-msg" hidden></span>
+        </div>
+      </div>
+    </div>
+    <div class="form-component">
+      <label for="password">密码</label>
+      <div class="input-container">
+        <input class="radius" type="password" id="password">
+        <div>
+          <span class="hint" hidden>密码长度至少为8位，可以包含数字、字母、下划线</span>
+          <span class="validate-msg" hidden></span>
+        </div>
+      </div>
+    </div>
+    <div class="form-component">
+      <label for="password-confirm">密码确认</label>
+      <div class="input-container">
+        <input type="password" class="radius" id="password-confirm">
+        <div>
+          <span class="hint" hidden>确认密码需与密码相同</span>
+          <span class="validate-msg" hidden></span>
+        </div>
+      </div>
+    </div>
+    <div class="form-component">
+      <label for="email">邮箱</label>
+      <div class="input-container">
+        <input type="email" class="radius" id="email">
+        <div>
+          <span class="hint" hidden>邮箱必须包含@</span>
+          <span class="validate-msg" hidden></span>
+        </div>
+      </div>
+    </div>
+    <div class="form-component">
+      <label for="phone">手机</label>
+      <div class="input-container">
+        <input type="phone" class="radius" id="phone">
+        <div>
+          <span class="hint" hidden>手机号为11位数字</span>
+          <span class="validate-msg" hidden></span>
+        </div>
+      </div>
+    </div>
+    <button type="button" id="btn" class="primary">提交</button>
+
+  </form>
+
+</body>
+
+</html>
