@@ -1,3 +1,5 @@
+// 如果添加动画的话，就不能用table中的单元格设置背景来处理了。这里因为时间原因就不予实现了。
+
 document.addEventListener("DOMContentLoaded", function(e) {
   onDomReady(e);
 })
@@ -23,6 +25,31 @@ function onDomReady(e){
       case "TUN BAC":
         box.turnBack();
         break;
+      case "TRA LEF":
+        box.goLeft();
+        break;
+      case "TRA RIG":
+        box.goRight();
+        break;
+      case "TRA UP":
+        box.goUp();
+        break;
+      case "TRA BOT":
+        box.goBottom();
+        break;
+      case "MOV LEF":
+        box.turnGoLeft();
+        break;
+      case "MOV TOP":
+        box.turnGoUp();
+        break;
+      case "MOV RIG":
+        box.turnGoRight();
+        break;
+      case "MOV BOT":
+        box.turnGoBottom();
+        break;
+
       default:
         console.log("No such command")
     }
@@ -96,7 +123,36 @@ Box.prototype = {
   },
   turnBack:function(){
     this.directionIndex += 2;
+  },
+  goLeft:function(){
+    this.col>this.panel.colStart && this.col--;
+  },
+  goRight:function(){
+    this.col<this.panel.colCount && this.col++;
+  },
+  goUp:function(){
+    this.row>this.panel.rowStart && this.row--;
+  },
+  goBottom:function(){
+    this.row< this.panel.rowCount && this.row++;
+  },
+  turnGoLeft:function(){
+    this.directionIndex = this.directions.indexOf('left')
+    this.goLeft()
+  },
+  turnGoRight:function(){
+    this.directionIndex = this.directions.indexOf('right')
+    this.goRight()
+  },
+  turnGoUp:function(){
+    this.directionIndex = this.directions.indexOf('top')
+    this.goUp()
+  },
+  turnGoBottom:function(){
+    this.directionIndex = this.directions.indexOf('bottom')
+    this.goBottom()
   }
+
 }
 
 
