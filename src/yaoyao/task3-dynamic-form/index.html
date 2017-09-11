@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>title</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js"></script>
+</head>
+
+<body>
+  
+</body>
+  <form action="post" id="form">
+    <div class="radios">
+      <div class="radio">
+        <input type="radio" value="inSchool" id="inSchool" name="status" checked>
+        <label for="inSchool">在校生</label>
+      </div>
+      <div class="radio">
+        <input type="radio" value="outSchool" id="outSchool" name="status">
+        <label for="outSchool">非在校生</label>
+      </div>
+    </div>
+
+    <div class="location">
+      <div class="school">
+        <label for="schoolCity">学校</label>
+        <select name="city" id="schoolCity">
+          <option value="beijing">北京</option>
+          <option value="shanghai">上海</option>
+          <option value="hangzhou">杭州</option>
+        </select>
+        <select name="school" id="schoolName">
+
+        </select>
+      </div>
+      <div class="company" hidden>
+        <label for="companyName">就业单位</label>
+        <input type="text" id="companyName">
+      </div>
+    </div>
+  </form>
+</html>
