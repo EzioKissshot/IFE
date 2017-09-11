@@ -1,0 +1,34 @@
+td{
+  height: 30px;
+  width:30px;
+}
+
+table{
+  border-collapse: collapse;
+  border: 1px black solid;
+}
+
+td{
+  border: 1px black solid;
+  line-height: 30px;
+  text-align: center;
+}
+
+.top{
+  background-image: url("./img/top.png");
+}
+.left{
+  background-image: url("./img/left.png");
+}
+.right{
+  background-image: url("./img/right.png")
+}
+.bottom{
+  background-image: url("./img/bottom.png");
+}
+
+.top, .left, .right, .bottom{
+  background-repeat: round;
+}
+
+
