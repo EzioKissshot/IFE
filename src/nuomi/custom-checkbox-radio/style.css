@@ -1,0 +1,34 @@
+input{
+  display: none;
+}
+
+.checkBox+label, .radios+label{
+  width:18px;
+  height: 18px;
+  border: 1px black solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkBox:checked+label, .radios:checked+label{
+  border: 1px solid red;
+}
+.checkBox:checked+label::after{
+  content: '\2714';
+  color: red;
+}
+
+.radios+label{
+  border-radius: 50%;
+}
+
+.radios:checked+label::after{
+  content: ' ';
+  background-color: red;
+  width:8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+

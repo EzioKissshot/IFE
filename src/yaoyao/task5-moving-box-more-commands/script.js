@@ -1,4 +1,4 @@
-// 如果添加动画的话，就不能用table中的单元格设置背景来处理了。这里因为时间原因就不予实现了。
+// 如果添加动画的话，就不能用table中的单元格设置背景来处理方块了。这里因为时间原因就不予实现了。
 
 document.addEventListener("DOMContentLoaded", function(e) {
   onDomReady(e);
