@@ -31,4 +31,28 @@ input{
   border-radius: 50%;
 }
 
+.checkBox_sprit+label, .radioBox_sprit+label{
+
+  background-image: url("./sprite.png");
+  height: 18px;
+  width: 18px;
+  display: inline-block;
+}
+
+.radioBox_sprit+label{
+  background-position: -22px -10px;
+}
+
+.radioBox_sprit:checked+label{
+  background-position: -57px -10px;
+}
+
+.checkBox_sprit+label{
+  background-position: -24px -32px;
+}
+
+.checkBox_sprit:checked+label{
+  background-position: -59px -31px;
+}
+
 
