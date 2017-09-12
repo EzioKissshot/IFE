@@ -1,0 +1,4 @@
+window.innerHeight/Width系列包含滚动条距离
+event的clientHeight/Width和document.body.clientHeight/Width系列不包含滚动条，而是元素的padding+content。注意不包含margin，所以需要将body和html的margin设0
+
+所以此案例中处理menu事件使用client系列
