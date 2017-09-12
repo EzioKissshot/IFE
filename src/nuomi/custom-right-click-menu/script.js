@@ -16,7 +16,9 @@ function onDomReady(e) {
     log(e);
     const menuStyle = getStyle(menu);
 
-    if (e.target.className === 'customMenu') {
+
+
+    if (isHaveClass(e.target, 'customMenu')||isHaveClass(e.target, "hint")|| isHaveClass(e.target, "clickedItemHint")) {
       preventDefault(e);
       const menuWidth = parseFloat(menuStyle.width);
       const menuHeight = parseFloat(menuStyle.height);
@@ -38,14 +40,25 @@ function onDomReady(e) {
 
   })
 
-  document.addEventListener('click', function(e) {
+  document.addEventListener('mousedown', function(e) {
     hideMenu();
   })
+
+  menu.addEventListener('mousedown', e=>stopPropagation(e))
 
   menu.addEventListener('click', function(e) {
     stopPropagation(e);
   // listen click and reaction.
+    log(e)
+    if(isHaveClass(e.target, "item")){
+      const clickedItem = e.target;
+      document.querySelector('.clickedItemHint').innerHTML = `You have clicked : ${clickedItem.innerHTML}`
+    }
   })
+}
+
+function isHaveClass(element, className){
+  return Array.from(element.classList).find(i=>i===className) ? true : false;
 }
 
 function getStyle(element) {
