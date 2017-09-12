@@ -1,0 +1,33 @@
+.panel > input{
+  display: none;
+}
+
+.panel-body{
+  display: flex;
+  align-items: top;
+  padding: 0 20px;
+  height: 0;
+  overflow: hidden;
+  transition: 0.5s height;;
+}
+
+.panel{
+  border: 1px solid #eee;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.panel-heading{
+  background-color: #eee;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+/* FIXME:如果设置为auto,就不能用transition动画了 */
+input:checked + label + .panel-body{
+  height: 150px;
+}
+
+
