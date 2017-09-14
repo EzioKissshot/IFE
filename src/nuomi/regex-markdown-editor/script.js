@@ -1,6 +1,6 @@
 //如果错过了这个事件怎么办？
 document.addEventListener("DOMContentLoaded", onDomReady)
-const reg = new _Regex();
+const reg = _regex();
 
 // abstract node class
 /* 
@@ -36,8 +36,8 @@ function RootNode(str){
 inherit(RootNode, BlockLevelNode)
 
 RootNode.prototype.multilineParse = function(parent, str){
-  const blocks = str.split(/^(`{3}[^]*?^`{3})/m)
-  const codeBlockReg = new RegExp(reg.MULTI_LINE_CODE);
+  const codeBlockReg = new RegExp(reg.MULTI_LINE_CODE,'m');
+  const blocks = str.split(codeBlockReg)
   for(let block of blocks){
     if(codeBlockReg.test(block)){
       addNodeToChildren(parent, new CodeBlockNode(block))
@@ -46,14 +46,19 @@ RootNode.prototype.multilineParse = function(parent, str){
     }
   }
 
-  log(parent.children)
+  // log(parent.children)
 }
 
 // In code block we do nothing now
 function CodeBlockNode(str){
   BlockLevelNode.call(this, str);
+  const match = new RegExp(reg.MULTI_LINE_CODE_CONTENT).exec(str)
+  match[1] && (this.content = match[1])
 }
 inherit(CodeBlockNode, BlockLevelNode)
+CodeBlockNode.prototype.render = function(){
+  return `<p>${this.content}</p>`
+}
 
 // In normal multiline block we parse it by line
 function NormalBlockNode(str){
@@ -81,10 +86,10 @@ NormalBlockNode.prototype.parse = function(str){
         node = new HeadingNode(s);
         break;
       case O_LIST:
-        node = new ListItemNode(s);
+        node = new OListItemNode(s);
         break;
       case U_LIST:
-        node = new ListItemNode(s);
+        node = new UListItemNode(s);
         break;
       case NEWLINE:
         node = new NewLineNode(s);
@@ -103,28 +108,61 @@ NormalBlockNode.prototype.parse = function(str){
 // Line level node
 function NormalTextLineNode(str){
   LineLevelNode.call(this, str)
+  this.content = str;
 }
 inherit(NormalTextLineNode, LineLevelNode)
+NormalTextLineNode.prototype.render = function(){
+  return `<span>${this.content}</span>`
+}
 
 function NewLineNode(str){
   LineLevelNode.call(this, str)
+  this.content = str;
 }
 inherit(NewLineNode, LineLevelNode)
+NewLineNode.prototype.render = function(){
+  return "<br>"
+}
 
 function HeadingNode(str){
   LineLevelNode.call(this, str)
+  const match = new RegExp(reg.HEADING_CONTENT).exec(str)
+  match[1] && (this.content = match[1])
 }
 inherit(HeadingNode, LineLevelNode)
-
-function ListItemNode(str){
-  LineLevelNode.call(this, str)
+HeadingNode.prototype.render = function(){
+  return `<h1>${this.content}</h1>`
 }
-inherit(ListItemNode, LineLevelNode)
+
+function OListItemNode(str){
+  LineLevelNode.call(this, str)
+  const match = new RegExp(reg.O_LIST_CONTENT).exec(str)
+  match[1] && (this.content = match[1])
+}
+inherit(OListItemNode, LineLevelNode)
+OListItemNode.prototype.render = function(){
+  return `<li>${this.content}</li>`
+}
+
+function UListItemNode(str){
+  LineLevelNode.call(this, str)
+  const match = new RegExp(reg.U_LIST_CONTENT).exec(str)
+  match[1] && (this.content = match[1])
+}
+inherit(UListItemNode, LineLevelNode)
+UListItemNode.prototype.render = function(){
+  return `<li>${this.content}</li>`
+}
 
 function QuoteNode(str){
   LineLevelNode.call(this, str)
+  this.content = str;
 }
 inherit(QuoteNode, LineLevelNode)
+QuoteNode.prototype.render = function(){
+  return `<span>${this.content}</span>`
+}
+
 // Line level node end
 
 // inline level node
@@ -137,7 +175,10 @@ inherit(InlineCodeNode, InlineLevelNode)
 // Utils function and class
 function MarkdownParser(str){
   this.root = new RootNode(str)
-  log(this)
+}
+
+MarkdownParser.prototype.getRootNode = function(){
+  return this.root;
 }
 
 function log(s){
@@ -152,7 +193,7 @@ function inherit(Child, Parent){
   Child.prototype.constructor = Child;
 }
 
-function _Regex(){
+function _regex(){
   const MULTI_LINE_CODE = '^(`{3}[^]*?^`{3})'
   const NORMAL_MULTI_LINE = '^(.|\\n)+$'
   
@@ -161,6 +202,11 @@ function _Regex(){
   const U_LIST = '^\\* .+$'
   const NEWLINE = '\\n'
   const NORMAL_LINE_TEXT = '^.+$'
+
+  const HEADING_CONTENT = '^#(.+)$'
+  const O_LIST_CONTENT = '^\\d\\. (.+)$'
+  const U_LIST_CONTENT = '^\\* (.+)$'
+  const MULTI_LINE_CODE_CONTENT = '^`{3}([^]*?)^`{3}'
   
   const INLINE_CODE = '^`.+`$'
   const NORMAL_INLINE_TEXT = '^.+$'
@@ -183,6 +229,9 @@ function _Regex(){
     NEWLINE,
     NORMAL_LINE_TEXT,
     MULTI_LINE_CODE,
+    HEADING_CONTENT,
+    O_LIST_CONTENT,
+    U_LIST_CONTENT,
   }
 }
 
@@ -192,6 +241,29 @@ function addNodeToChildren(parent, node){
   parent.children = Array.of(node);
 }
 // Utils end
+
+// TODO: render node
+function render(container, node){
+  let html = "";
+  if(node instanceof RootNode){
+    for(let block of node.children){
+      if(!block instanceof BlockLevelNode){
+        throw new Error("Not a block level node")
+      }
+      if(block.render){
+        html+= block.render();
+        continue;
+      }
+      for(let line of block.children){
+        if(!line instanceof LineLevelNode){
+          throw new Error("Not a line level node")
+        }
+        html += line.render();
+      }
+    }
+  }
+  container.innerHTML = html;
+}
 
 // Do it
 function onDomReady(){
@@ -204,6 +276,9 @@ function onDomReady(){
   editorDoc.addEventListener('input',function(e){
     // log(e.target.innerText)
     const parser = new MarkdownParser(e.target.innerText);
+    const root = parser.getRootNode();
+    log(root);
+    render(previewer, root);
   })
 }
 
