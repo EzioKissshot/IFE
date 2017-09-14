@@ -1,0 +1,30 @@
+html, body, .root{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.root{
+  display: flex;
+}
+
+.editor-container, 
+.previewer-container{
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.editor-container{
+  background-color: rgba(129,212,250 ,1);
+}
+
+.previewer-container{
+  background-color: rgba(230,238,156 ,1);
+}
+
+#editor{
+  height: 100%;
+  width: 100%;
+
+}
+

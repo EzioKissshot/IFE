@@ -10,6 +10,7 @@ function haveSameStrNear(str) {
   const reg = /(\w+)/g;
   let match = null;
   let lastMatch = null;
+  // 想要匹配多次必须对同一global Regex对象调用多次exec()
   while ((match = reg.exec(str)) !== null) {
     if (lastMatch !== null && match[1] === lastMatch[1]) {
       return true;
