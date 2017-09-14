@@ -28,11 +28,11 @@ function _Regex(){
   const MULTI_LINE_CODE = '^(`{3}[^]*?^`{3})'
   const NORMAL_MULTI_LINE = '^(.|\\n)+$'
   
-  const HEADING = '^#.+(?=\\n)$'
-  const O_LIST = '^\\d\\. .+(?=\\n)$'
-  const U_LIST = '^\\* .+(?=\\n)$'
+  const HEADING = '^#.+$'
+  const O_LIST = '^\\d\\. .+$'
+  const U_LIST = '^\\* .+$'
   const NEWLINE = '\\n'
-  const NORMAL_LINE_TEXT = '^.+(?=\\n)$'
+  const NORMAL_LINE_TEXT = '^.+$'
   
   const INLINE_CODE = '^`.+`$'
   const NORMAL_INLINE_TEXT = '^.+$'
@@ -45,9 +45,15 @@ function _Regex(){
   
   return {
     mline : new RegExp(multiLineTokens.join('|'), 'gm'),
-    line : new RegExp(lineTokens.join('|'),'g'),
+    line : new RegExp(lineTokens.join('|'),'gm'),
     inline : new RegExp(inlineTokens.join('|'),'g'),
     mlCode : new RegExp(MULTI_LINE_CODE, 'gm'),
+    lineTokens,
+    HEADING,
+    O_LIST,
+    U_LIST,
+    NEWLINE,
+    NORMAL_LINE_TEXT,
   }
 }
 
@@ -61,7 +67,7 @@ function RootNode(str){
   this.multilineParse(this, str, reg);
 }
 
-RootNode.prototype.multilineParse = function(parent, str, reg){
+RootNode.prototype.multilineParse = function(parent, str){
   const blocks = str.split(/^(`{3}[^]*?^`{3})/m)
   for(let block of blocks){
     if(reg.mlCode.test(block)){
@@ -71,48 +77,88 @@ RootNode.prototype.multilineParse = function(parent, str, reg){
     }
   }
 
-  function addNodeToChildren(parent, node){
-    parent.children ? 
-    parent.children.push(node) :
-    parent.children = Array.of(node);
-  }
-
   log(parent.children)
 }
 
+function addNodeToChildren(parent, node){
+  parent.children ? 
+  parent.children.push(node) :
+  parent.children = Array.of(node);
+}
+
+// In code block we do nothing 
 function MultiLineCodeNode(str){
   this.str = str;
 }
 
+// In normal multiline block we parse it by line
 function MultiLineNode(str){
-  this.str = str
+  this.str = str;
+  this.parse(str);
 }
 
-function TextNode(str){
+MultiLineNode.prototype.parse = function(str){
+  let match = null;
+  const lineReg = reg.line;
+  while((match = lineReg.exec(str))!==null){
+    const s = match[0]
+    const matchedRegStr = reg.lineTokens.find(regStr=>{
+      return new RegExp(regStr).test(s);
+    })
+    if(!matchedRegStr){
+      throw new Error("Unpaired Regex String:"+s)
+    }
+
+    const {HEADING, O_LIST, U_LIST ,NEWLINE, NORMAL_LINE_TEXT} = reg;
+    let node;
+    switch(matchedRegStr){
+      case HEADING:
+        node = new HeadingNode(s);
+        break;
+      case O_LIST:
+        node = new ListItemNode(s);
+        break;
+      case U_LIST:
+        node = new ListItemNode(s);
+        break;
+      case NEWLINE:
+        node = new NewLineNode(s);
+        break;
+      case NORMAL_LINE_TEXT:
+        node = new NormalTextLineNode(s);
+        break;
+      default:
+        throw new Error("Unhandle Regex Matching!")
+    }
+    addNodeToChildren(this, node);
+  }
+}
+
+function NormalTextLineNode(str){
   this.str = str;
 }
 
-function NewLineNode(){
-
+function NewLineNode(str){
+  this.str = str;
 }
 
-function HeadingNode(){
-
+function HeadingNode(str){
+  this.str = str;
 }
 
-function ListItemNode(){
-
+function ListItemNode(str){
+  this.str = str;
 }
 
-function QuoteNode(){
-
+function QuoteNode(str){
+  this.str = str;
 }
 
-function InlineCodeNode(){
-
+function InlineCodeNode(str){
+  this.str = str;
 }
 
-function CodeBlockNode(){
-
+function CodeBlockNode(str){
+  this.str = str;
 }
 
