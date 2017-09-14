@@ -49,15 +49,17 @@ RootNode.prototype.multilineParse = function(parent, str){
   // log(parent.children)
 }
 
+// FIXME: 现在代码块渲染有点bug
 // In code block we do nothing now
 function CodeBlockNode(str){
   BlockLevelNode.call(this, str);
-  const match = new RegExp(reg.MULTI_LINE_CODE_CONTENT).exec(str)
+  const match = new RegExp(reg.MULTI_LINE_CODE_CONTENT,'m').exec(str)
   match[1] && (this.content = match[1])
 }
 inherit(CodeBlockNode, BlockLevelNode)
+// FIXME:现在是粗暴替换回车成br，是不是有更好的方法？将其进行line parse?
 CodeBlockNode.prototype.render = function(){
-  return `<p>${this.content}</p>`
+  return `<p>${this.content.replace(/\n/g,'<br>')}</p>`
 }
 
 // In normal multiline block we parse it by line
@@ -133,7 +135,7 @@ inherit(HeadingNode, LineLevelNode)
 HeadingNode.prototype.render = function(){
   return `<h1>${this.content}</h1>`
 }
-
+// FIXME: ol and ul 应该提升到Block级别进行解析，因为他们外面需要包围ul和ol元素，里面是li元素
 function OListItemNode(str){
   LineLevelNode.call(this, str)
   const match = new RegExp(reg.O_LIST_CONTENT).exec(str)
@@ -232,6 +234,7 @@ function _regex(){
     HEADING_CONTENT,
     O_LIST_CONTENT,
     U_LIST_CONTENT,
+    MULTI_LINE_CODE_CONTENT,
   }
 }
 
@@ -280,6 +283,30 @@ function onDomReady(){
     log(root);
     render(previewer, root);
   })
+
+  //FIXME: 用command插入的text解析错误，目测是每行前插入了空格的原因
+  // const testText = `
+  // # Heading!
+  // * unorder list!
+  // 1. ordered list
+  // *no it's not list
+  // 2.just normal text
+  
+  // \`\`\`
+  // block
+  // code
+  // python
+  // \`\`\`
+  
+  // \`\`\`
+  // hello
+  // \`\`\`
+  
+  
+  // #goodbye
+  // `
+  // editorDoc.execCommand("selectAll", false)
+  // editorDoc.execCommand("insertText", false, testText)
 }
 
 
