@@ -39,11 +39,17 @@ html, body, .root{
 }
 
 .mkd-code-block{
-  background-color: burlywood;
+  background-color: rgba(144,164,174 ,1);
 }
 
 .mkd-inline-code{
-  background-color: blueviolet;
+  background-color: rgba(144,164,174 ,1);
+}
+
+.mkd-quote{
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 5px solid rgba(3,169,244 ,1);
 }
 
 

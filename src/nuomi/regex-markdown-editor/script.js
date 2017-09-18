@@ -74,15 +74,24 @@ ListBlockNode.prototype.render = function() {
   return `<${listType} class="mkd-list">${renderChildren(this.children)}</${listType}>`;
 }
 
+function QuoteBlockNode(nodes) {
+  BlockLevelNode.call(this,"")
+  this.children = nodes.filter(node => !(node instanceof NewLineNode))
+}
+inherit(QuoteBlockNode, BlockLevelNode)
+QuoteBlockNode.prototype.render = function () {
+  return `<p class="mkd-quote">${renderChildren(this.children)}</p>`
+}
+
 // In normal multiline block we parse it by line
 function NormalBlockNode(str) {
   BlockLevelNode.call(this, str)
   this.parse(str);
-  this.mergeList(this.children)
+  this.mergeSpecBlocks(this.children)
 }
 inherit(NormalBlockNode, BlockLevelNode)
 
-function mergeNodes(nodes, type) {
+function mergeNodes(nodes, type, blockType) {
   for (let i = 0; i < nodes.length; i++) {
     if (nodes[i] instanceof type) {
       let j = i + 1;
@@ -93,14 +102,15 @@ function mergeNodes(nodes, type) {
           break;
         }
       }
-      nodes.splice(i, j - i, new ListBlockNode(nodes.slice(i, j)))
+      nodes.splice(i, j - i, new blockType(nodes.slice(i, j)))
     }
   }
 }
 
-NormalBlockNode.prototype.mergeList = function(nodes) {
-  mergeNodes(nodes, OListItemNode);
-  mergeNodes(nodes, UListItemNode);
+NormalBlockNode.prototype.mergeSpecBlocks = function(nodes) {
+  mergeNodes(nodes, OListItemNode, ListBlockNode);
+  mergeNodes(nodes, UListItemNode, ListBlockNode);
+  mergeNodes(nodes, QuoteLineNode, QuoteBlockNode);
 }
 
 NormalBlockNode.prototype.fixNewline = function(nodes) {
@@ -124,7 +134,7 @@ NormalBlockNode.prototype.parse = function(str) {
       throw new Error("Unpaired Regex String:" + s)
     }
 
-    const {HEADING, O_LIST, U_LIST, NEWLINE, NORMAL_LINE_TEXT} = reg;
+    const {HEADING, O_LIST, U_LIST, NEWLINE, NORMAL_LINE_TEXT, QUOTE_LINE} = reg;
     let node;
     switch (matchedRegStr) {
       case HEADING:
@@ -141,6 +151,9 @@ NormalBlockNode.prototype.parse = function(str) {
         break;
       case NORMAL_LINE_TEXT:
         node = new NormalTextLineNode(s);
+        break;
+      case QUOTE_LINE:
+        node = new QuoteLineNode(s)
         break;
       default:
         throw new Error("Unhandle Regex Matching!")
@@ -197,11 +210,9 @@ function NormalTextLineNode(str) {
 }
 inherit(NormalTextLineNode, LineLevelNode)
 NormalTextLineNode.prototype.render = function() {
-  log("render")
   return `<p class="mkd-p">${renderChildren(this.children)}</p>`
 }
 NormalTextLineNode.prototype.parse = function(str){
-  log("parse")
   lineParse(this, str)
 }
 
@@ -255,13 +266,14 @@ UListItemNode.prototype.render = function() {
   return `<li>${renderChildren(this.children)}</li>`
 }
 
-function QuoteNode(str) {
+function QuoteLineNode(str) {
   LineLevelNode.call(this, str)
   this.content = str;
+  this.parse(this.content)
 }
-inherit(QuoteNode, LineLevelNode)
-QuoteNode.prototype.render = function() {
-  return `<span>${this.content}</span>`
+inherit(QuoteLineNode, LineLevelNode)
+QuoteLineNode.prototype.render = function() {
+  return `<span class="mkd-quote-line">${renderChildren(this.children)}</span><br>`
 }
 
 // Line level node end
@@ -269,7 +281,8 @@ QuoteNode.prototype.render = function() {
 // inline level node
 function InlineCodeNode(str) {
   InlineLevelNode.call(this, str)
-  const match = new RegExp(reg.INLINE_CODE).exec(str)
+  const match = new RegExp(reg.INLINE_CODE_CONTENT).exec(str)
+  // log(match)
   match[1] && (this.content = match[1])
 }
 inherit(InlineCodeNode, InlineLevelNode)
@@ -319,19 +332,22 @@ function _regex() {
   const U_LIST = '^\\* .+$'
   const NEWLINE = '[\\n\\r]'
   const NORMAL_LINE_TEXT = '^.+$'
+  const QUOTE_LINE = '^[^\\S\\r\\n]{4}.+$'
 
   const HEADING_CONTENT = '^(#+)(.+)$'
   const O_LIST_CONTENT = '^\\d\\. (.+)$'
   const U_LIST_CONTENT = '^\\* (.+)$'
+  const QUOTE_LINE_CONTENT = '^[^\\S\\r\\n]{4}(.+)$'
 
   const MULTI_LINE_CODE_CONTENT = '^`{3}(.*)[\\n\\r]([^]*?)^`{3}'
 
   const INLINE_CODE = '(`.+?`)'
+  const INLINE_CODE_CONTENT = '`(.+?)`'
   const NORMAL_INLINE_TEXT = '.+'
 
   // NORMAL_XXXX 应该总是在数组最后，最低的匹配优先级，否则则需在其正则中排除其他正则
   const multiLineTokens = [MULTI_LINE_CODE];
-  const lineTokens = [HEADING, O_LIST, U_LIST, NORMAL_LINE_TEXT, NEWLINE];
+  const lineTokens = [HEADING, O_LIST, U_LIST, QUOTE_LINE, NORMAL_LINE_TEXT, NEWLINE];
   const inlineTokens = [INLINE_CODE, NORMAL_INLINE_TEXT];
 
 
@@ -349,12 +365,15 @@ function _regex() {
     O_LIST,
     U_LIST,
     NEWLINE,
+    QUOTE_LINE,
+    QUOTE_LINE_CONTENT,
     NORMAL_LINE_TEXT,
     MULTI_LINE_CODE,
     HEADING_CONTENT,
     O_LIST_CONTENT,
     U_LIST_CONTENT,
     MULTI_LINE_CODE_CONTENT,
+    INLINE_CODE_CONTENT,
   }
 }
 
@@ -400,39 +419,43 @@ function onDomReady() {
     render(previewer, root);
   })
 
-  //FIXME: 用command插入的text解析错误，目测是每行前插入了空格的原因
   const testText = `
-# Heading!
+# Heading! H1!! \`with code\`
 * unorder list!
-* hello
+*  \`with\` \`code\` \`too\`
 
-1. fu
-
-
+1. order
 
 
-6. foo
 
-* yes
+
+6. list
+
 
 
 1. ordered list
-2. hello
+2. end
+
+
 *no it's not list
-2.just \`normal\` text
+2.just \`normal\` text with some \`inline code\`
 
 \`\`\`
-block
+javascript
 code
-python
+block
 \`\`\`
 
 \`\`\`
 hello
 \`\`\`
 
+    quote \`code\`
+      I think is
+    Famouse person say blablabla
 
-#goodbye`
+
+### h3 goodbye`
   editorDoc.execCommand("selectAll", false)
   editorDoc.execCommand("insertText", false, testText)
 }
