@@ -10,6 +10,7 @@ content是此Node需要渲染的内容（去除语法标识）
 function _Node(str){
   this.str = str;
   this.content = "";
+  this.children = [];
 }
 
 function BlockLevelNode(str){
@@ -62,13 +63,60 @@ CodeBlockNode.prototype.render = function(){
   return `<p>${this.content.replace(/\n/g,'<br>')}</p>`
 }
 
+function ListBlockNode(nodes){
+  BlockLevelNode.call(this, "")
+  this.children = nodes.filter(node=>!(node instanceof NewLineNode))
+}
+inherit(ListBlockNode, BlockLevelNode)
+ListBlockNode.prototype.render = function(){
+  const listType = (this.children[0] instanceof OListItemNode) ? "ol" : "ul";
+  return `<${listType}>${this.children.reduce((html,node)=>html+node.render(),"")}</${listType}>`;
+}
+
 // In normal multiline block we parse it by line
 function NormalBlockNode(str){
   BlockLevelNode.call(this, str)
-  this.children = []
   this.parse(str);
+  this.mergeList(this.children)
 }
 inherit(NormalBlockNode, BlockLevelNode)
+
+NormalBlockNode.prototype.mergeList = function(nodes){
+  for(let i = 0;i< nodes.length;i++){
+    if(nodes[i] instanceof OListItemNode){
+      let j = i+1;
+      for(;j< nodes.length;j++){
+        if((nodes[j] instanceof OListItemNode)||(nodes[j] instanceof NewLineNode)){
+          continue;
+        }else{
+          break;
+        }
+      }
+      nodes.splice(i, j-i, new ListBlockNode(nodes.slice(i,j)))
+    }
+
+    if(nodes[i] instanceof UListItemNode){
+      let j = i+1;
+      for(;j< nodes.length;j++){
+        if((nodes[j] instanceof UListItemNode)||(nodes[j] instanceof NewLineNode)){
+          continue;
+        }else{
+          break;
+        }
+      }
+      nodes.splice(i, j-i, new ListBlockNode(nodes.slice(i,j)))
+    }
+  }
+}
+
+NormalBlockNode.prototype.fixNewline = function(nodes){
+  for(let i = 0; i < nodes.length;i++){
+    if((nodes[i] instanceof NewLineNode)&&(nodes[i+1] instanceof NewLineNode)){
+      nodes.splice(i,1);
+      i--;
+    }
+  }
+}
 
 NormalBlockNode.prototype.parse = function(str){
   let match = null;
@@ -130,7 +178,7 @@ function NewLineNode(str){
 }
 inherit(NewLineNode, LineLevelNode)
 NewLineNode.prototype.render = function(){
-  return "<br>"
+  return ""
 }
 
 function HeadingNode(str){
@@ -143,22 +191,28 @@ HeadingNode.prototype.render = function(){
   return `<h1>${this.content}</h1>`
 }
 // FIXME: ol and ul 应该提升到Block级别进行解析，因为他们外面需要包围ul和ol元素，里面是li元素
-function OListItemNode(str){
+function ListItemNode(str){
   LineLevelNode.call(this, str)
+}
+inherit(ListItemNode, LineLevelNode);
+
+
+function OListItemNode(str){
+  ListItemNode.call(this, str)
   const match = new RegExp(reg.O_LIST_CONTENT).exec(str)
   match[1] && (this.content = match[1])
 }
-inherit(OListItemNode, LineLevelNode)
+inherit(OListItemNode, ListItemNode)
 OListItemNode.prototype.render = function(){
   return `<li>${this.content}</li>`
 }
 
 function UListItemNode(str){
-  LineLevelNode.call(this, str)
+  ListItemNode.call(this, str)
   const match = new RegExp(reg.U_LIST_CONTENT).exec(str)
   match[1] && (this.content = match[1])
 }
-inherit(UListItemNode, LineLevelNode)
+inherit(UListItemNode, ListItemNode)
 UListItemNode.prototype.render = function(){
   return `<li>${this.content}</li>`
 }
@@ -204,17 +258,18 @@ function inherit(Child, Parent){
 
 function _regex(){
   const MULTI_LINE_CODE = '^(`{3}[^]*?^`{3})'
-  const NORMAL_MULTI_LINE = '^(.|\\n)+$'
+  const NORMAL_MULTI_LINE = '^[^]+$'
   
   const HEADING = '^#.+$'
   const O_LIST = '^\\d\\. .+$'
   const U_LIST = '^\\* .+$'
-  const NEWLINE = '\\n'
+  const NEWLINE = '[\\n\\r]'
   const NORMAL_LINE_TEXT = '^.+$'
 
   const HEADING_CONTENT = '^#(.+)$'
   const O_LIST_CONTENT = '^\\d\\. (.+)$'
   const U_LIST_CONTENT = '^\\* (.+)$'
+
   const MULTI_LINE_CODE_CONTENT = '^`{3}([^]*?)^`{3}'
   
   const INLINE_CODE = '^`.+`$'
@@ -222,7 +277,7 @@ function _regex(){
 
   // NORMAL_XXXX 应该总是在数组最后，最低的匹配优先级，否则则需在其正则中排除其他正则
   const multiLineTokens = [MULTI_LINE_CODE];
-  const lineTokens = [HEADING, O_LIST, U_LIST ,NEWLINE, NORMAL_LINE_TEXT];
+  const lineTokens = [HEADING, O_LIST, U_LIST , NORMAL_LINE_TEXT, NEWLINE];
   const inlineTokens = [INLINE_CODE, NORMAL_INLINE_TEXT];
 
   
@@ -287,7 +342,20 @@ function onDomReady(){
 `
 # Heading!
 * unorder list!
+* hello
+
+1. fu
+
+
+
+
+6. foo
+
+* yes
+
+
 1. ordered list
+2. hello
 *no it's not list
 2.just normal text
 
