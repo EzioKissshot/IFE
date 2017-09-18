@@ -65,6 +65,7 @@ CodeBlockNode.prototype.render = function(){
 // In normal multiline block we parse it by line
 function NormalBlockNode(str){
   BlockLevelNode.call(this, str)
+  this.children = []
   this.parse(str);
 }
 inherit(NormalBlockNode, BlockLevelNode)
@@ -105,6 +106,12 @@ NormalBlockNode.prototype.parse = function(str){
     addNodeToChildren(this, node);
   }
 }
+NormalBlockNode.prototype.render = function(){
+  return this.children.reduce(function(html, child){
+    return html + child.render()
+  },"")
+}
+
 // Block level node end
 
 // Line level node
@@ -253,16 +260,7 @@ function render(container, node){
       if(!block instanceof BlockLevelNode){
         throw new Error("Not a block level node")
       }
-      if(block.render){
-        html+= block.render();
-        continue;
-      }
-      for(let line of block.children){
-        if(!line instanceof LineLevelNode){
-          throw new Error("Not a line level node")
-        }
-        html += line.render();
-      }
+      html += block.render()
     }
   }
   container.innerHTML = html;
@@ -285,28 +283,28 @@ function onDomReady(){
   })
 
   //FIXME: 用command插入的text解析错误，目测是每行前插入了空格的原因
-  // const testText = `
-  // # Heading!
-  // * unorder list!
-  // 1. ordered list
-  // *no it's not list
-  // 2.just normal text
-  
-  // \`\`\`
-  // block
-  // code
-  // python
-  // \`\`\`
-  
-  // \`\`\`
-  // hello
-  // \`\`\`
-  
-  
-  // #goodbye
-  // `
-  // editorDoc.execCommand("selectAll", false)
-  // editorDoc.execCommand("insertText", false, testText)
+  const testText = 
+`
+# Heading!
+* unorder list!
+1. ordered list
+*no it's not list
+2.just normal text
+
+\`\`\`
+block
+code
+python
+\`\`\`
+
+\`\`\`
+hello
+\`\`\`
+
+
+#goodbye`
+  editorDoc.execCommand("selectAll", false)
+  editorDoc.execCommand("insertText", false, testText)
 }
 
 
