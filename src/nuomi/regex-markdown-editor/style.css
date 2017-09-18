@@ -30,7 +30,9 @@ html, body, .root{
 }
 
 .mkd-head{}
-.mkd-p{}
+.mkd-p{
+  margin: 8px 0;
+}
 
 .mkd-list{
   padding-left: 20px;
@@ -38,6 +40,10 @@ html, body, .root{
 
 .mkd-code-block{
   background-color: burlywood;
+}
+
+.mkd-inline-code{
+  background-color: blueviolet;
 }
 
 

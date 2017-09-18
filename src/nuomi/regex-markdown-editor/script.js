@@ -1,4 +1,3 @@
-//如果错过了这个事件怎么办？
 document.addEventListener("DOMContentLoaded", onDomReady)
 const reg = _regex();
 
@@ -22,6 +21,9 @@ function LineLevelNode(str) {
   _Node.call(this, str);
 }
 inherit(LineLevelNode, _Node)
+LineLevelNode.prototype.parse = function (str) {
+  lineParse(this, str)
+}
 
 function InlineLevelNode(str) {
   _Node.call(this, str);
@@ -50,15 +52,14 @@ RootNode.prototype.multilineParse = function(parent, str) {
 // log(parent.children)
 }
 
-// FIXME: 现在代码块渲染有点bug
 // In code block we do nothing now
 function CodeBlockNode(str) {
   BlockLevelNode.call(this, str);
   const match = new RegExp(reg.MULTI_LINE_CODE_CONTENT, 'm').exec(str)
-  match[1] && (this.content = match[1])
+  match[1] && (this.lang = match[1])
+  match[2] && (this.content = match[2])
 }
 inherit(CodeBlockNode, BlockLevelNode)
-// FIXME:现在是粗暴替换回车成br，是不是有更好的方法？将其进行line parse?
 CodeBlockNode.prototype.render = function() {
   return `<p class="mkd-code-block">${this.content.replace(/\n/g,'<br>')}</p>`
 }
@@ -70,7 +71,7 @@ function ListBlockNode(nodes) {
 inherit(ListBlockNode, BlockLevelNode)
 ListBlockNode.prototype.render = function() {
   const listType = (this.children[0] instanceof OListItemNode) ? "ol" : "ul";
-  return `<${listType} class="mkd-list">${this.children.reduce((html,node)=>html+node.render(),"")}</${listType}>`;
+  return `<${listType} class="mkd-list">${renderChildren(this.children)}</${listType}>`;
 }
 
 // In normal multiline block we parse it by line
@@ -81,7 +82,7 @@ function NormalBlockNode(str) {
 }
 inherit(NormalBlockNode, BlockLevelNode)
 
-function mergeNodes(nodes, type){
+function mergeNodes(nodes, type) {
   for (let i = 0; i < nodes.length; i++) {
     if (nodes[i] instanceof type) {
       let j = i + 1;
@@ -156,13 +157,52 @@ NormalBlockNode.prototype.render = function() {
 // Block level node end
 
 // Line level node
+function lineParse(parentNode, str){
+  let match = null;
+  const specInlineReg = reg.specInline;
+  const tokens = str.split(specInlineReg)
+
+  const inlineReg= reg.inlineTokens;
+  tokens.forEach(function (s) {
+    if(!s) return;
+    const matchedRegStr = inlineReg.find(regStr => {
+      return new RegExp(regStr).test(s);
+    })
+    if (!matchedRegStr) {
+      throw new Error("Unpaired Regex String:" + s)
+    }
+
+    const {INLINE_CODE, NORMAL_INLINE_TEXT} = reg;
+    let node;
+    switch (matchedRegStr) {
+      case INLINE_CODE:
+        node = new InlineCodeNode(s);
+        break;
+      case NORMAL_INLINE_TEXT:
+        node = new InlineNormalTextNode(s);
+        break;
+      default:
+        throw new Error("Unhandle Regex Matching!")
+    }
+    addNodeToChildren(parentNode, node);
+  })
+
+}
+
+
 function NormalTextLineNode(str) {
   LineLevelNode.call(this, str)
   this.content = str;
+  this.parse(this.content);
 }
 inherit(NormalTextLineNode, LineLevelNode)
 NormalTextLineNode.prototype.render = function() {
-  return `<p class="mkd-p">${this.content}</p>`
+  log("render")
+  return `<p class="mkd-p">${renderChildren(this.children)}</p>`
+}
+NormalTextLineNode.prototype.parse = function(str){
+  log("parse")
+  lineParse(this, str)
 }
 
 function NewLineNode(str) {
@@ -177,13 +217,16 @@ NewLineNode.prototype.render = function() {
 function HeadingNode(str) {
   LineLevelNode.call(this, str)
   const match = new RegExp(reg.HEADING_CONTENT).exec(str)
-  match[1] && (this.content = match[1])
+  match[1] && (this.sharps = match[1])
+  match[2] && (this.content = match[2])
+  this.parse(this.content)
 }
 inherit(HeadingNode, LineLevelNode)
 HeadingNode.prototype.render = function() {
-  return `<h1 class="mkd-head">${this.content}</h1>`
+  const head = this.sharps.length > 5 ? "h5" : `h${this.sharps.length}`
+  return `<${head} class="mkd-head">${renderChildren(this.children)}</${head}>`
 }
-// FIXME: ol and ul 应该提升到Block级别进行解析，因为他们外面需要包围ul和ol元素，里面是li元素
+
 function ListItemNode(str) {
   LineLevelNode.call(this, str)
 }
@@ -194,20 +237,22 @@ function OListItemNode(str) {
   ListItemNode.call(this, str)
   const match = new RegExp(reg.O_LIST_CONTENT).exec(str)
   match[1] && (this.content = match[1])
+  this.parse(this.content)
 }
 inherit(OListItemNode, ListItemNode)
 OListItemNode.prototype.render = function() {
-  return `<li>${this.content}</li>`
+  return `<li>${renderChildren(this.children)}</li>`
 }
 
 function UListItemNode(str) {
   ListItemNode.call(this, str)
   const match = new RegExp(reg.U_LIST_CONTENT).exec(str)
   match[1] && (this.content = match[1])
+  this.parse(this.content)
 }
 inherit(UListItemNode, ListItemNode)
 UListItemNode.prototype.render = function() {
-  return `<li>${this.content}</li>`
+  return `<li>${renderChildren(this.children)}</li>`
 }
 
 function QuoteNode(str) {
@@ -224,8 +269,24 @@ QuoteNode.prototype.render = function() {
 // inline level node
 function InlineCodeNode(str) {
   InlineLevelNode.call(this, str)
+  const match = new RegExp(reg.INLINE_CODE).exec(str)
+  match[1] && (this.content = match[1])
 }
 inherit(InlineCodeNode, InlineLevelNode)
+InlineCodeNode.prototype.render = function () {
+  return `<span class="mkd-inline-code">${this.content}</span>`
+}
+
+
+function InlineNormalTextNode(str){
+  InlineLevelNode.call(this, str)
+  const match = new RegExp(reg.NORMAL_INLINE_TEXT).exec(str)
+  match[0] && (this.content = match[0])
+}
+inherit(InlineNormalTextNode, InlineLevelNode)
+InlineNormalTextNode.prototype.render = function () {
+  return `<span class="mkd-inline-text">${this.content}</span>`
+}
 // inline level node end
 
 // Utils function and class
@@ -250,23 +311,23 @@ function inherit(Child, Parent) {
 }
 
 function _regex() {
-  const MULTI_LINE_CODE = '^(`{3}[^]*?^`{3})'
+  const MULTI_LINE_CODE = '^(`{3}.*[\\n\\r][^]*?^`{3})'
   const NORMAL_MULTI_LINE = '^[^]+$'
 
-  const HEADING = '^#.+$'
+  const HEADING = '^#+.+$'
   const O_LIST = '^\\d\\. .+$'
   const U_LIST = '^\\* .+$'
   const NEWLINE = '[\\n\\r]'
   const NORMAL_LINE_TEXT = '^.+$'
 
-  const HEADING_CONTENT = '^#(.+)$'
+  const HEADING_CONTENT = '^(#+)(.+)$'
   const O_LIST_CONTENT = '^\\d\\. (.+)$'
   const U_LIST_CONTENT = '^\\* (.+)$'
 
-  const MULTI_LINE_CODE_CONTENT = '^`{3}([^]*?)^`{3}'
+  const MULTI_LINE_CODE_CONTENT = '^`{3}(.*)[\\n\\r]([^]*?)^`{3}'
 
-  const INLINE_CODE = '^`.+`$'
-  const NORMAL_INLINE_TEXT = '^.+$'
+  const INLINE_CODE = '(`.+?`)'
+  const NORMAL_INLINE_TEXT = '.+'
 
   // NORMAL_XXXX 应该总是在数组最后，最低的匹配优先级，否则则需在其正则中排除其他正则
   const multiLineTokens = [MULTI_LINE_CODE];
@@ -279,7 +340,11 @@ function _regex() {
     line: new RegExp(lineTokens.join('|'), 'gm'),
     inline: new RegExp(inlineTokens.join('|'), 'g'),
     mlCode: new RegExp(MULTI_LINE_CODE, 'gm'),
+    specInline: new RegExp(inlineTokens.slice(0,inlineTokens.length-1).join('|'),'g'),
     lineTokens,
+    inlineTokens,
+    INLINE_CODE,
+    NORMAL_INLINE_TEXT,
     HEADING,
     O_LIST,
     U_LIST,
@@ -298,6 +363,11 @@ function addNodeToChildren(parent, node) {
     parent.children.push(node) :
     parent.children = Array.of(node);
 }
+
+function renderChildren(children){
+  return children.reduce((html,node)=>html+node.render(),"")
+}
+
 // Utils end
 
 // TODO: render node
@@ -326,7 +396,7 @@ function onDomReady() {
     // log(e.target.innerText)
     const parser = new MarkdownParser(e.target.innerText);
     const root = parser.getRootNode();
-    log(root);
+    // log(root);
     render(previewer, root);
   })
 
@@ -349,7 +419,7 @@ function onDomReady() {
 1. ordered list
 2. hello
 *no it's not list
-2.just normal text
+2.just \`normal\` text
 
 \`\`\`
 block
