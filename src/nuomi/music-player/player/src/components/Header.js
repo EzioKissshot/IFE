@@ -15,8 +15,8 @@ export default function Header(props){
 
   return (
   <Container>
-    <Info fs="18px">NonStop!Journey</Info>
-    <Info fs="12px">Goose house</Info>
+    <Info fs="18px">{props.song.name}</Info>
+    <Info fs="12px">{props.song.singer}</Info>
   </Container>
   )
 
